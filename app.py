@@ -23,16 +23,24 @@ def registration():
             return json.dumps({'success': False}), 400
 
 
+@app.route('/event/<int:id>', methods=['POST'])
 @app.route('/event', methods=['POST'])
-def event():
+def event(id=0):
     if request.method == 'POST':
         eve_data = json.loads(request.data)
-        try:
-            event = Event(**eve_data)
-            event.save()
-            return json.dumps({'success': True}), 200
-        except:
-            return json.dumps({'success': False}), 400
+        if (id == 0):
+            try:
+                event = Event(**eve_data)
+                event.save()
+                return json.dumps({'success': True}), 200
+            except:
+                return json.dumps({'success': False}), 400
+        else:
+            try:
+                event = Event.update(**eve_data).where(Event.id == id).execute()
+                return json.dumps({'success': True}), 200
+            except:
+                return json.dumps({'success': False}), 400
 
 
 @app.route('/users', methods=['GET'])
